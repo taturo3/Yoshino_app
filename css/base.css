@@ -1,0 +1,177 @@
+/* =========================================================
+   base.css — テーマ変数・リセット・全体レイアウト
+   ========================================================= */
+
+/* ---------- テーマ変数（ライト） ---------- */
+:root {
+  --bg: #E8F3EA;
+  --paper: #FFFFFF;
+  --ink: #23362A;
+  --sub: #5E7565;
+  --sugi: #3D7A50;
+  --sugi-2: #D2E9D7;
+  --sakura: #FF7AA5;
+  --sakura-ink: #D94B7B;
+  --sakura-2: #FFE2EB;
+  --wood: #F4DDB4;
+  --line: #D2E4D6;
+  --shade: rgba(34, 72, 46, .28);
+
+  --display: "Mochiy Pop One", "Hiragino Maru Gothic ProN", "Zen Maru Gothic", system-ui, sans-serif;
+  --body: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ---------- テーマ変数（ダーク） ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15231A;
+    --paper: #1F3228;
+    --ink: #EAF4EC;
+    --sub: #A6C0AE;
+    --sugi: #86C99C;
+    --sugi-2: #2A4434;
+    --sakura: #FF8DB3;
+    --sakura-ink: #FF9DBE;
+    --sakura-2: #472A35;
+    --wood: #5B4731;
+    --line: #2E4A3A;
+    --shade: rgba(0, 0, 0, .5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #15231A;
+  --paper: #1F3228;
+  --ink: #EAF4EC;
+  --sub: #A6C0AE;
+  --sugi: #86C99C;
+  --sugi-2: #2A4434;
+  --sakura: #FF8DB3;
+  --sakura-ink: #FF9DBE;
+  --sakura-2: #472A35;
+  --wood: #5B4731;
+  --line: #2E4A3A;
+  --shade: rgba(0, 0, 0, .5);
+}
+
+/* ---------- リセット ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  height: 100%;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sugi);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ---------- アプリ全体の枠 ---------- */
+.app {
+  height: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px 4px;
+  flex: none;
+}
+
+.logo {
+  font-family: var(--display);
+  font-size: 21px;
+  color: var(--sugi);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: .02em;
+}
+
+.logo svg {
+  width: 26px;
+  height: 26px;
+}
+
+.top-meta {
+  font-size: 12px;
+  color: var(--sub);
+}
+
+main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.pad {
+  padding: 8px 20px 24px;
+}
+
+/* ---------- 共通アニメーション ---------- */
+@keyframes pop {
+  from { transform: scale(.4); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+}
+
+/* ---------- 動きを減らす設定 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: .01ms !important;
+  }
+  .petal {
+    display: none;
+  }
+}
