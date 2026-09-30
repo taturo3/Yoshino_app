@@ -4,7 +4,7 @@
 
 function showStart() {
   setTabs(null);
-  $('#topMeta').textContent = '吉野杉マッチング';
+  $('#topMeta').textContent = '吉野の木マッチング';
 
   const hasAnswers = Object.keys(S.answers).length >= 7;
 
@@ -17,7 +17,7 @@ function showStart() {
     <section class="start">
       <div class="hero-stump">${stumpSVG({ id: 'hero', rings: .8, knots: .15, color: .6, grain: .2 })}</div>
       <h1>推し木</h1>
-      <p class="lead">好きな木目、好きな色。<br>あなたにぴったりの吉野杉と出会おう。</p>
+      <p class="lead">好きな木目、好きな色。<br>あなたにぴったりの吉野の木と出会おう。</p>
       ${resumeHTML}
       <div class="entries">
         <button class="entry" data-entry="tree">

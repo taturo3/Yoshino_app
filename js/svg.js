@@ -115,13 +115,14 @@ function plankSVG({ knots = 0, color = .3, grain = 0 }) {
     }
   }
 
+  // 節：knots が大きいほど数が増え（最大3つ）、大きくなる
   let k = '';
-  if (knots) {
-    [[32, 30], [88, 52], [52, 64]].forEach(([x, y]) => {
-      k += `<ellipse cx="${x}" cy="${y}" rx="10" ry="7.5" fill="none" stroke="${line}" stroke-width="1.5"/>`
-         + `<ellipse cx="${x}" cy="${y}" rx="5.5" ry="4.2" fill="#744630"/>`;
-    });
-  }
+  const knotCount = Math.ceil(knots * 3);
+  const s = .5 + .5 * knots;
+  [[32, 30], [88, 52], [52, 64]].slice(0, knotCount).forEach(([x, y]) => {
+    k += `<ellipse cx="${x}" cy="${y}" rx="${10 * s}" ry="${7.5 * s}" fill="none" stroke="${line}" stroke-width="1.5"/>`
+       + `<ellipse cx="${x}" cy="${y}" rx="${5.5 * s}" ry="${4.2 * s}" fill="#744630"/>`;
+  });
 
   return `<svg viewBox="0 0 120 84" aria-hidden="true">`
        + `<defs><clipPath id="${id}"><rect x="4" y="4" width="112" height="76" rx="14"/></clipPath></defs>`

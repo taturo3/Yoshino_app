@@ -5,7 +5,7 @@
 /** 木のカード（cls: 'top' = いちばん上 / 'next' = その下） */
 function cardHTML(t, cls) {
   const a11y = cls === 'top'
-    ? `tabindex="0" aria-label="吉野杉 ${t.name}、相性${score(t)}%。右で推す、左でまた今度、Enterでくわしく"`
+    ? `tabindex="0" aria-label="${SPECIES[t.species].name} ${t.name}、相性${score(t)}%。右で推す、左でまた今度、Enterでくわしく"`
     : 'aria-hidden="true"';
 
   return `
@@ -19,7 +19,7 @@ function cardHTML(t, cls) {
       </div>
       <div class="card-body">
         <div class="name-row">
-          <span class="kind">吉野杉</span><h2>${t.name}</h2><span class="age">樹齢${t.age}年</span>
+          <span class="kind">${SPECIES[t.species].name}</span><h2>${t.name}</h2><span class="age">樹齢${t.age}年</span>
         </div>
         <p class="feature">${t.feature}</p>
         <dl class="specs">

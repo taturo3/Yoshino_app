@@ -13,8 +13,9 @@ function openSheet(t) {
     <div class="sec">
       <h3>${t.name}から、つながる</h3>
       <ol class="chain">
-        <li><small>推し木</small><b>吉野杉「${t.name}」</b></li>
-        <li><small>同じ特徴の材</small><b>${t.material}</b></li>
+        <li><small>推し木</small><b>${SPECIES[t.species].name}「${t.name}」</b></li>
+        <li><small>同じ特徴の材</small><b>${t.material}</b>
+          <div class="items">${materialsFor(t, 2, t.species).map(m => `<span class="chip">${m.name}</span>`).join('')}</div></li>
         <li><small>この材でできた商品</small><div class="items">${t.products.map(p => `<span class="chip">${p}</span>`).join('')}</div></li>
         <li><small>つくる人</small><b>${t.maker}</b></li>
         <li><small>体験する</small><b>${t.exp}</b></li>
@@ -42,7 +43,7 @@ function openSheet(t) {
       </div>
       <div class="sheet-body">
         <div class="name-row">
-          <span class="kind">吉野杉</span><h2 id="shName">${t.name}</h2><span class="age">樹齢${t.age}年・${t.place}育ち</span>
+          <span class="kind">${SPECIES[t.species].name}</span><h2 id="shName">${t.name}</h2><span class="age">樹齢${t.age}年・${t.place}育ち</span>
         </div>
         <p class="feature">${t.feature}</p>
         <dl class="specs">

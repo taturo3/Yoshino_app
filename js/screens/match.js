@@ -23,7 +23,7 @@ function showMatch(t) {
       <div class="heart">${ICON.heart}</div>
       <div class="p">${stumpSVG(t, { sprout: false })}</div>
     </div>
-    <p class="who">吉野杉「${t.name}」<br>樹齢${t.age}年・${t.place}育ち</p>
+    <p class="who">${SPECIES[t.species].name}「${t.name}」<br>樹齢${t.age}年・${t.place}育ち</p>
     <div class="btns">
       <button class="btn white" id="mSee">${t.name}とのつながりを見る</button>
       <button class="btn link" id="mMore">ほかの木にも会う</button>

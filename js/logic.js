@@ -116,6 +116,35 @@ function queue() {
     .sort((a, b) => score(b) - score(a));
 }
 
+/* ---------- 材木 ---------- */
+
+/**
+ * 特徴 p（木、または好み）と材木 m の近さ（0〜1）
+ * 節と木目は材木の等級が決めている項目だけを比べ、色は樹種で比べる（重みは半分）
+ */
+function materialFit(p, m) {
+  let d = 0, w = 0;
+  if (m.knots != null) { d += Math.abs((p.knots ?? .5) - m.knots); w += 1; }
+  if (m.grain != null) { d += Math.abs((p.grain ?? .5) - m.grain); w += 1; }
+  d += .5 * Math.abs((p.color ?? .5) - m.color);
+  w += .5;
+  return 1 - d / w;
+}
+
+/** 特徴 p に近い材木を n 件。species を渡すとその樹種だけ */
+function materialsFor(p, n, species) {
+  return MATERIALS
+    .filter(m => !species || m.species === species)
+    .map(m => ({ ...m, fit: materialFit(p, m) }))
+    .sort((a, b) => b.fit - a.fit)
+    .slice(0, n);
+}
+
+/** 材木のイラスト（節の等級は板目、柾目はまっすぐな木目で描く） */
+function materialSVG(m) {
+  return plankSVG({ knots: m.knots ?? 0, color: m.color, grain: m.grain ?? 1 });
+}
+
 /* ---------- 表示用テキスト ---------- */
 
 /** 特徴値（0〜1）を言葉にする */

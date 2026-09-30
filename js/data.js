@@ -106,10 +106,62 @@ const TREES = [
   },
 ];
 
-// story が未設定の木はまんなか（.5）にしておく
+// story が未設定の木はまんなか（.5）に、species が未設定の木は杉にしておく
 TREES.forEach(t => {
   if (t.story == null) t.story = .5;
+  if (t.species == null) t.species = 'sugi';
 });
+
+/**
+ * 樹種
+ * color … 材の色あい（0 = 白く明るい 〜 1 = 赤み）。好みとの近さの計算とイラストに使う
+ */
+const SPECIES = {
+  sugi: {
+    name: '吉野杉',
+    color: .55,
+    note: '赤身と白太の色の違いがはっきり出るので、源平の表情も楽しめる。',
+  },
+  hinoki: {
+    name: '吉野桧',
+    color: .15,
+    note: '色の差がおだやかで、明るくやさしい色あい。香りもさわやか。',
+  },
+};
+
+/**
+ * 材木の等級
+ * knots … 節の多さ（0〜1）。null なら節では選ばない
+ * grain … 木目のゆらぎ（0 = まっすぐ 〜 1 = ゆらゆら）。null なら木目では選ばない
+ */
+const GRADES = [
+  { k: 'ikibushi',   name: '生節一等',   knots: .9,  grain: null,
+    desc: '大小の節がたくさん。山の表情がそのまま出る、力強くおおらかな材。' },
+  { k: 'kobushi',    name: '小節',       knots: .6,  grain: null,
+    desc: '直径25mmほどの節が、1mに1個くらい点在。ほどよく自然な表情。' },
+  { k: 'jokobushi',  name: '上小節',     knots: .35, grain: null,
+    desc: '直径10mmほどの小さな節が、1mに1個くらい。すっきりの中に木らしさ。' },
+  { k: 'tokusen',    name: '特選上小節', knots: .15, grain: null,
+    desc: '鉛筆の芯ほどの節が、2mに1個くらい。木目や色あいもそろった上質な材。' },
+  { k: 'mushi',      name: '無節',       knots: 0,   grain: null,
+    desc: '節がまったくない材。木目も色あいもよく揃い、アテもほとんどない。' },
+  { k: 'masame',     name: '柾目',       knots: null, grain: 0,
+    desc: '年輪がまっすぐ平行に並ぶ木目。端正で、反りや狂いが出にくい。' },
+];
+
+/** 材木カタログ（樹種 × 等級） */
+const MATERIALS = Object.keys(SPECIES).flatMap(s =>
+  GRADES.map(g => ({
+    id: `${s}-${g.k}`,
+    species: s,
+    grade: g.k,
+    name: `${SPECIES[s].name}（${g.name}）`,
+    knots: g.knots,
+    grain: g.grain,
+    color: SPECIES[s].color,
+    desc: g.desc,
+  }))
+);
 
 /** 好みの軸（プロフィールのメーターと相性計算に使う） */
 const DIMS = [

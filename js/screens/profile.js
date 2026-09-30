@@ -23,6 +23,17 @@ function showProfile(first) {
       </div>`;
   }).join('');
 
+  // 好みに近い材木（杉・桧あわせて上位3つ）
+  const materialsHTML = materialsFor(me(), 3).map(m => `
+    <div class="mat">
+      <div class="mat-art">${materialSVG(m)}</div>
+      <div>
+        <b>${m.name}</b>
+        <p>${m.desc}</p>
+        <small>${SPECIES[m.species].note}</small>
+      </div>
+    </div>`).join('');
+
   main.innerHTML = `
     <section class="pad">
       <div class="prof-head">
@@ -34,6 +45,10 @@ function showProfile(first) {
         <h3>MY TREE PROFILE</h3>
         ${metersHTML}
         <div class="prof-use"><b>使いたい場所</b><span class="chip">${USES[a.use] || 'まだ'}</span></div>
+      </div>
+      <div class="prof-card">
+        <h3>あなたに合う材木</h3>
+        ${materialsHTML}
       </div>
       <div class="stack-btns">
         <button class="btn primary" id="go">${ICON.heart} ${first ? 'この好みで推し木をさがす' : '推し木をさがす'}</button>
