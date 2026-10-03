@@ -2,16 +2,22 @@
    screens/swipe.js — スワイプで木をさがす画面
    ========================================================= */
 
-/** 木のカード（cls: 'top' = いちばん上 / 'next' = その下） */
+/** 木のイラスト（背景の山並み + 切り株キャラ） */
+function treeArt(t, opts) {
+  return `<div class="scene">${sceneSVG(t.tint, t.id)}</div><div class="char">${stumpSVG(t, opts)}</div>`;
+}
+
+/** 木のカード（cls: 'front' = いちばん上 / 'next' = その下） */
 function cardHTML(t, cls) {
-  const a11y = cls === 'top'
-    ? `tabindex="0" aria-label="${SPECIES[t.species].name} ${t.name}、相性${score(t)}%。右で推す、左でまた今度、Enterでくわしく"`
+  const sp = SPECIES[t.species].name;
+  const a11y = cls === 'front'
+    ? `tabindex="0" aria-label="${sp} ${t.name}、相性${score(t)}%。右で推す、左でまた今度、Enterでくわしく"`
     : 'aria-hidden="true"';
 
   return `
     <article class="card ${cls}" data-id="${t.id}" ${a11y}>
       <div class="card-art" style="background:${t.tint}">
-        ${stumpSVG(t)}
+        ${treeArt(t)}
         <span class="badge">相性 <b>${score(t)}%</b></span>
         <span class="place">${t.place}育ち</span>
         <span class="stamp like">推し！</span>
@@ -19,7 +25,7 @@ function cardHTML(t, cls) {
       </div>
       <div class="card-body">
         <div class="name-row">
-          <span class="kind">${SPECIES[t.species].name}</span><h2>${t.name}</h2><span class="age">樹齢${t.age}年</span>
+          <span class="kind ${t.species}">${sp}</span><h2>${t.name}</h2><span class="age">樹齢${t.age}年</span>
         </div>
         <p class="feature">${t.feature}</p>
         <dl class="specs">
@@ -42,7 +48,7 @@ function showSwipe() {
 
   // 全部の木に会い終わったとき
   if (!q.length) {
-    main.innerHTML = `
+    paint(`
       <section class="empty">
         ${stumpSVG({ id: 'end', rings: .7, knots: .3, color: .5, grain: .4 }, { mood: 'wink' })}
         <h2>吉野の木、ぜんぶに会いました</h2>
@@ -50,35 +56,45 @@ function showSwipe() {
         <div class="stack-btns" style="width:100%;max-width:300px">
           ${S.matches.length ? '<button class="btn primary" id="toOshi">推し木を見る</button>' : ''}
           <button class="btn soft" id="again">パスした木にもう一度会う</button>
+          <button class="btn link" id="toMat">材木をさがす</button>
         </div>
-      </section>`;
+      </section>`, 'swipe-empty');
 
     const toOshi = $('#toOshi');
     if (toOshi) toOshi.onclick = () => showOshi();
+    $('#toMat').onclick = () => showMaterials();
     $('#again').onclick = () => {
       S.passed = [];
+      S.last = null;
       save();
       showSwipe();
     };
     return;
   }
 
-  main.innerHTML = `
+  const seen = TREES.length - q.length;
+  paint(`
     <section class="swipe">
-      <p class="swipe-tip">右にスワイプで推す、左でまた今度。タップでくわしく。</p>
-      <div class="deck">${q[1] ? cardHTML(q[1], 'next') : ''}${cardHTML(q[0], 'top')}</div>
-      <div class="actions">
-        <button class="act nope" id="bNope" aria-label="また今度">${ICON.x}</button>
-        <button class="act info" id="bInfo" aria-label="くわしく見る">${ICON.info}</button>
-        <button class="act like" id="bLike" aria-label="推す">${ICON.heart}</button>
+      <div class="swipe-head">
+        <p class="swipe-tip">右にスワイプで推す、左でまた今度</p>
+        <span class="left-count">のこり <b>${q.length}</b> / ${TREES.length}本</span>
       </div>
-      <div class="act-lbl" aria-hidden="true"><span>また今度</span><span>くわしく</span><span>推す</span></div>
-    </section>`;
+      <div class="dots" aria-hidden="true">${TREES.map((_, i) => `<i class="${i < seen ? 'seen' : i === seen ? 'now' : ''}"></i>`).join('')}</div>
+      <div class="deck">${q[1] ? cardHTML(q[1], 'next') : ''}${cardHTML(q[0], 'front')}</div>
+      <div class="actions">
+        <button class="act undo" id="bUndo" aria-label="ひとつもどす" ${S.last ? '' : 'disabled'}>${ICON.undo}</button>
+        <button class="act nope" id="bNope" aria-label="また今度">${ICON.x}</button>
+        <button class="act like" id="bLike" aria-label="推す">${ICON.heart}</button>
+        <button class="act info" id="bInfo" aria-label="くわしく見る">${ICON.info}</button>
+      </div>
+      <div class="act-lbl" aria-hidden="true"><span>もどす</span><span>また今度</span><span>推す</span><span>くわしく</span></div>
+    </section>`, 'swipe');
 
   const t = q[0];
-  const card = main.querySelector('.card.top');
+  const card = main.querySelector('.card.front');
   bindDrag(card, t);
 
+  $('#bUndo').onclick = undo;
   $('#bNope').onclick = () => decide(t, false);
   $('#bLike').onclick = () => decide(t, true);
   $('#bInfo').onclick = () => openSheet(t);
@@ -100,6 +116,7 @@ function bindDrag(card, t) {
     sy = e.clientY;
     card.setPointerCapture(e.pointerId);
     card.style.transition = 'none';
+    card.style.animation = 'none';
   });
 
   card.addEventListener('pointermove', e => {
@@ -143,10 +160,11 @@ function decide(t, liked) {
   if (busy) return;
   busy = true;
 
-  const card = main.querySelector('.card.top');
+  const card = main.querySelector('.card.front');
   if (card) {
     const stamp = card.querySelector(liked ? '.stamp.like' : '.stamp.nope');
     if (stamp) stamp.style.opacity = 1;
+    card.style.animation = 'none';
     card.style.transition = 'transform .38s ease-in, opacity .38s';
     card.style.transform = `translate(${liked ? 520 : -520}px,40px) rotate(${liked ? 24 : -24}deg)`;
     card.style.opacity = '0';
@@ -158,6 +176,8 @@ function decide(t, liked) {
     } else {
       S.passed.push(t.id);
     }
+    S.last = { id: t.id, liked };
+    frontId = null;
     save();
     busy = false;
     updateCount();
@@ -165,4 +185,18 @@ function decide(t, liked) {
     showSwipe();
     if (liked) showMatch(t);
   }, 300);
+}
+
+/** 直前のスワイプを取り消す */
+function undo() {
+  if (!S.last || busy) return;
+  const { id, liked } = S.last;
+  if (liked) S.matches = S.matches.filter(x => x !== id);
+  else S.passed = S.passed.filter(x => x !== id);
+  S.last = null;
+  frontId = id;
+  save();
+  updateCount();
+  showSwipe();
+  toast(`${TREES.find(t => t.id === id).name}にもう一度会えます`);
 }

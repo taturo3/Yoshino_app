@@ -123,7 +123,7 @@
 
 /* ---------- 詳細シート（下から出るモーダル） ---------- */
 .overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 20;
   display: flex;
@@ -156,12 +156,29 @@
   position: relative;
   display: grid;
   place-items: center;
-  padding: 26px 0 8px;
+  height: 220px;
+  overflow: hidden;
 }
 
-.sheet-art svg {
-  width: 170px;
-  height: 170px;
+.sheet-art .char svg {
+  width: 180px;
+  height: 180px;
+  margin-top: 24px;
+}
+
+/* 材木の詳細シートの上部 */
+.sheet-art.mat-hero {
+  background: linear-gradient(170deg, #FFF6E6, #F4E2C2);
+}
+
+.sheet-art.mat-hero.hinoki {
+  background: linear-gradient(170deg, #FBFAF2, #EDE9D2);
+}
+
+.sheet-art.mat-hero > svg {
+  width: 82%;
+  height: auto;
+  margin-top: 18px;
 }
 
 .close {
@@ -324,7 +341,7 @@
 
 /* ---------- マッチ演出 ---------- */
 .match {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 30;
   background: var(--sakura);
@@ -464,9 +481,9 @@
 
 /* ---------- トースト ---------- */
 .toast {
-  position: fixed;
+  position: absolute;
   left: 50%;
-  bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%) translateY(20px);
   background: var(--ink);
   color: var(--bg);
@@ -484,4 +501,319 @@
 .toast.show {
   opacity: 1;
   transform: translateX(-50%);
+}
+
+/* ---------- 樹種ラベル ---------- */
+.kind.sugi.kind,
+.kind.hinoki.kind {
+  display: inline-block;
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 900;
+  line-height: 1.7;
+}
+
+.kind.sugi.kind {
+  background: #FBE3D6;
+  color: #A8503A;
+}
+
+.kind.hinoki.kind {
+  background: #E8EFD6;
+  color: #5F7A2E;
+}
+
+/* ---------- 木・材木のイラスト（背景の山並み + キャラ） ---------- */
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.scene svg {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.char {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- シートの中の部品 ---------- */
+.sec .items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip.link {
+  cursor: pointer;
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  font-size: 12.5px;
+  background: var(--sakura-2);
+  color: var(--sakura-ink);
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--sub);
+}
+
+.sheet-actions.one {
+  grid-template-columns: 1fr;
+}
+
+.sheet-body > .sec .btn.link,
+#unmatch {
+  margin: 8px auto 0;
+  display: block;
+  width: auto;
+}
+
+/* 材木シートの「この材に近い木」 */
+.tree-links {
+  display: grid;
+  gap: 8px;
+}
+
+.tree-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 16px;
+  background: var(--bg);
+  text-align: left;
+}
+
+.tree-link .ic {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.tree-link .ic svg {
+  width: 44px;
+  height: 44px;
+}
+
+.tree-link > span:nth-child(2) {
+  flex: 1;
+}
+
+.tree-link b {
+  display: block;
+  font-size: 14px;
+}
+
+.tree-link small {
+  color: var(--sub);
+  font-size: 12px;
+}
+
+.tree-link > svg {
+  width: 18px;
+  height: 18px;
+  color: var(--sub);
+}
+
+/* ---------- 絞り込み（タブ風のボタン） ---------- */
+.filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.filters button {
+  padding: 7px 15px;
+  border-radius: 999px;
+  background: var(--paper);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--sub);
+  box-shadow: 0 2px 0 var(--line);
+}
+
+.filters button[aria-selected="true"] {
+  background: var(--sugi);
+  color: #fff;
+  box-shadow: none;
+}
+
+/* ---------- 相談フォーム ---------- */
+.form-body {
+  position: relative;
+  padding-top: 26px;
+}
+
+.form-kick {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--sub);
+}
+
+.form-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+
+.subject {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--sugi-2);
+  color: var(--sugi);
+  font-weight: 900;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.subject svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.field {
+  display: block;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+
+.field > span,
+.field > legend {
+  display: block;
+  padding: 0;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.field em {
+  font-style: normal;
+  font-size: 10.5px;
+  color: #fff;
+  background: var(--sakura-ink);
+  padding: 1px 6px;
+  border-radius: 6px;
+  margin-left: 4px;
+  vertical-align: 1px;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 11px 14px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--sugi);
+  background: var(--paper);
+}
+
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kind-opt input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kind-opt span {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.kind-opt input:checked + span {
+  background: var(--sugi);
+  border-color: var(--sugi);
+  color: #fff;
+}
+
+.kind-opt input:focus-visible + span {
+  outline: 3px solid var(--sugi);
+  outline-offset: 2px;
+}
+
+.form-err {
+  min-height: 1.4em;
+  margin: 0 0 8px;
+  color: var(--sakura-ink);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* 送信完了 */
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0 6px;
+}
+
+.done-ic {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--sugi);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  animation: pop .45s cubic-bezier(.3, 1.8, .5, 1) both;
+}
+
+.done-ic svg {
+  width: 38px;
+  height: 38px;
+}
+
+.done h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 23px;
+  margin: 14px 0 6px;
+}
+
+.done p {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.done .btn {
+  margin-top: 12px;
+  max-width: 260px;
 }

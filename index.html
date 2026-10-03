@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#E8F3EA">
   <title>推し木｜あなたにぴったりの吉野の木と出会う（サンプル）</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +16,17 @@
 </head>
 <body>
   <div class="app">
+    <!-- PC で見たときだけ表示するスマホのステータスバー -->
+    <div class="statusbar" aria-hidden="true">
+      <span id="clock">9:41</span>
+      <span class="island"></span>
+      <span class="sys">
+        <svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".35"/></svg>
+        <svg viewBox="0 0 16 12"><path d="M8 11.5l2.4-3a3.4 3.4 0 0 0-4.8 0zM3.2 6.6a6.8 6.8 0 0 1 9.6 0l-1.4 1.8a4.6 4.6 0 0 0-6.8 0zM.6 3.4a10.6 10.6 0 0 1 14.8 0L14 5.2a8.4 8.4 0 0 0-12 0z"/></svg>
+        <svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="1.6"/><rect x="23.5" y="4" width="1.8" height="4" rx=".9" opacity=".4"/></svg>
+      </span>
+    </div>
+
     <header class="top">
       <div class="logo" aria-label="推し木">
         <svg viewBox="0 0 32 32" aria-hidden="true">
@@ -50,21 +62,35 @@
         推し木
         <span class="count" id="oshiCount" hidden></span>
       </button>
+      <button class="tab" data-tab="mat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+          <path d="M3 8.5l9-4 9 4-9 4z"/>
+          <path d="M3 8.5v3.5l9 4 9-4V8.5"/>
+          <path d="M3 12v3.5l9 4 9-4V12"/>
+        </svg>
+        材木
+      </button>
       <button class="tab" data-tab="me">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <ellipse cx="12" cy="15" rx="8" ry="5.5"/>
           <ellipse cx="12" cy="15" rx="3.5" ry="2.2"/>
           <path d="M12 9.5V5M12 6c-1.5-2-4-2-4-2s.5 2.5 4 2zM12 6c1.5-2 4-2 4-2s-.5 2.5-4 2z"/>
         </svg>
-        わたしの好み
+        わたし
       </button>
     </nav>
+
+    <!-- モーダル類（スマホ枠の中に収めるため .app の内側に置く） -->
+    <div class="overlay" id="overlay" hidden></div>
+    <div class="match" id="match" hidden role="dialog" aria-modal="true" aria-labelledby="matchTitle"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </div>
 
-  <!-- モーダル類 -->
-  <div class="overlay" id="overlay" hidden></div>
-  <div class="match" id="match" hidden role="dialog" aria-modal="true" aria-labelledby="matchTitle"></div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <!-- PC で見たときだけ表示する説明 -->
+  <aside class="device-note">
+    <b>推し木</b> — 吉野の木と出会うアプリのモック<br>
+    スマートフォンで開くと全画面で表示されます
+  </aside>
 
   <!-- 読み込み順に依存しているので順番を変えないこと -->
   <script src="js/data.js"></script>
@@ -79,6 +105,8 @@
   <script src="js/screens/match.js"></script>
   <script src="js/screens/sheet.js"></script>
   <script src="js/screens/oshi.js"></script>
+  <script src="js/screens/materials.js"></script>
+  <script src="js/screens/inquiry.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

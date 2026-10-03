@@ -104,6 +104,28 @@ const TREES = [
     maker: '天川村の家具工房',
     exp: 'モデルハウスで木の家に泊まる',
   },
+  {
+    id: 'kaori', name: 'かおり', age: 90, place: '吉野町', tint: '#E3F1F4', species: 'hinoki',
+    rings: .8, knots: .2, color: .15, grain: .2, scent: 1, story: .6,
+    uses: ['house', 'small'], price: 4,
+    feature: 'すっと澄んだ、桧の香り',
+    bio: '杉山にまじって育った桧。白くつややかな肌で、削るとさわやかな香りが広がる。水に強く、お風呂や洗面まわりにも。',
+    material: '桧の上小節・柾目板',
+    products: ['桧のお風呂椅子', '香りの小箱', '洗面カウンター'],
+    maker: '吉野町の桶・樽職人',
+    exp: '桧風呂の香りを体験する',
+  },
+  {
+    id: 'hinata', name: 'ひなた', age: 55, place: '大淀町', tint: '#F4EFD9', species: 'hinoki',
+    rings: .5, knots: .65, color: .3, grain: .6, scent: .8, story: .3,
+    uses: ['house', 'furniture'], price: 2,
+    feature: '節もかわいい、元気な桧',
+    bio: '日当たりのいい尾根で、のびのび育った若い桧。小さな節がアクセントになり、明るい色と香りで部屋がぱっと明るくなる。',
+    material: '桧の小節・節あり板',
+    products: ['桧の床板', 'すのこベッド', 'ウッドデッキ'],
+    maker: '大淀町の工務店',
+    exp: '桧の床の家でごろんと寝ころぶ',
+  },
 ];
 
 // story が未設定の木はまんなか（.5）に、species が未設定の木は杉にしておく
@@ -133,20 +155,27 @@ const SPECIES = {
  * 材木の等級
  * knots … 節の多さ（0〜1）。null なら節では選ばない
  * grain … 木目のゆらぎ（0 = まっすぐ 〜 1 = ゆらゆら）。null なら木目では選ばない
+ * usage … おすすめの使いみち
  */
 const GRADES = [
   { k: 'ikibushi',   name: '生節一等',   knots: .9,  grain: null,
-    desc: '大小の節がたくさん。山の表情がそのまま出る、力強くおおらかな材。' },
+    desc: '大小の節がたくさん。山の表情がそのまま出る、力強くおおらかな材。',
+    usage: ['柱・梁などの構造材', '床板', '壁板'] },
   { k: 'kobushi',    name: '小節',       knots: .6,  grain: null,
-    desc: '直径25mmほどの節が、1mに1個くらい点在。ほどよく自然な表情。' },
+    desc: '直径25mmほどの節が、1mに1個くらい点在。ほどよく自然な表情。',
+    usage: ['床板', '羽目板', '棚板'] },
   { k: 'jokobushi',  name: '上小節',     knots: .35, grain: null,
-    desc: '直径10mmほどの小さな節が、1mに1個くらい。すっきりの中に木らしさ。' },
+    desc: '直径10mmほどの小さな節が、1mに1個くらい。すっきりの中に木らしさ。',
+    usage: ['内装の壁・天井', '家具', 'カウンター'] },
   { k: 'tokusen',    name: '特選上小節', knots: .15, grain: null,
-    desc: '鉛筆の芯ほどの節が、2mに1個くらい。木目や色あいもそろった上質な材。' },
+    desc: '鉛筆の芯ほどの節が、2mに1個くらい。木目や色あいもそろった上質な材。',
+    usage: ['和室の造作', '見える柱', '家具'] },
   { k: 'mushi',      name: '無節',       knots: 0,   grain: null,
-    desc: '節がまったくない材。木目も色あいもよく揃い、アテもほとんどない。' },
+    desc: '節がまったくない材。木目も色あいもよく揃い、アテもほとんどない。',
+    usage: ['化粧柱', 'テーブル天板', '建具'] },
   { k: 'masame',     name: '柾目',       knots: null, grain: 0,
-    desc: '年輪がまっすぐ平行に並ぶ木目。端正で、反りや狂いが出にくい。' },
+    desc: '年輪がまっすぐ平行に並ぶ木目。端正で、反りや狂いが出にくい。',
+    usage: ['天井板', '建具', 'まな板・小物'] },
 ];
 
 /** 材木カタログ（樹種 × 等級） */
@@ -155,11 +184,13 @@ const MATERIALS = Object.keys(SPECIES).flatMap(s =>
     id: `${s}-${g.k}`,
     species: s,
     grade: g.k,
+    gradeName: g.name,
     name: `${SPECIES[s].name}（${g.name}）`,
     knots: g.knots,
     grain: g.grain,
     color: SPECIES[s].color,
     desc: g.desc,
+    usage: g.usage,
   }))
 );
 
@@ -170,7 +201,7 @@ const DIMS = [
   { k: 'color', label: '色',   ends: ['明るい', '赤み'] },
   { k: 'grain', label: '木目', ends: ['まっすぐ', 'ゆらゆら'] },
   { k: 'scent', label: '香り', ends: ['ほのか', 'しっかり'] },
-  { k: 'story', label: '物語', ends: ['見た目', '物語'] },
+  { k: 'story', label: '物語', ends: ['見た目', '物語'], say: ['見た目重視', '物語重視'] },
 ];
 
 /** 相性の理由に使う言い回し */

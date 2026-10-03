@@ -7,7 +7,7 @@ function showMatch(t) {
 
   // 桜の花びらをランダムに降らせる
   let petals = '';
-  for (let i = 0; i < 22; i++) {
+  for (let i = 0; i < 26; i++) {
     const left = Math.random() * 100;
     const dx = (Math.random() * 120 - 60).toFixed(0);
     const duration = (2.6 + Math.random() * 2.4).toFixed(1);
@@ -19,9 +19,9 @@ function showMatch(t) {
     <p class="small">相性 ${score(t)}%</p>
     <h2 id="matchTitle">あなたの推し木に<br>なりました</h2>
     <div class="pair">
-      <div class="p">${stumpSVG(me(), { sprout: false })}</div>
+      <div class="p">${stumpSVG(me(), { sprout: false, ground: false, mood: 'joy' })}</div>
       <div class="heart">${ICON.heart}</div>
-      <div class="p">${stumpSVG(t, { sprout: false })}</div>
+      <div class="p" style="background:${t.tint}">${stumpSVG(t, { sprout: false, ground: false, mood: 'joy' })}</div>
     </div>
     <p class="who">${SPECIES[t.species].name}「${t.name}」<br>樹齢${t.age}年・${t.place}育ち</p>
     <div class="btns">

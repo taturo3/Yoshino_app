@@ -1,11 +1,15 @@
 /* =========================================================
-   main.js — タブ・全体のキー操作・起動
+   main.js — タブ・全体のキー操作・ステータスバー・起動
    ========================================================= */
 
 /* ---------- タブ ---------- */
 
-/** cur: 'swipe' | 'oshi' | 'me'。null ならタブバーを隠す */
+/** いま選ばれているタブ（'swipe' | 'oshi' | 'mat' | 'me' | null） */
+let currentTab = null;
+
+/** cur: タブ名。null ならタブバーを隠す */
 function setTabs(cur) {
+  currentTab = cur;
   const tabs = $('#tabs');
   tabs.hidden = !cur;
   tabs.querySelectorAll('.tab').forEach(b => {
@@ -26,6 +30,7 @@ function updateCount() {
 const TAB_SCREENS = {
   swipe: showSwipe,
   oshi: showOshi,
+  mat: showMaterials,
   me: () => showProfile(false),
 };
 
@@ -39,6 +44,14 @@ document.addEventListener('keydown', e => {
   if (!$('#match').hidden) $('#match').hidden = true;
   else if (!$('#overlay').hidden) closeSheet();
 });
+
+/* ---------- ステータスバーの時計（PC のスマホ枠表示用） ---------- */
+function tick() {
+  const d = new Date();
+  $('#clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+tick();
+setInterval(tick, 30000);
 
 /* ---------- 起動 ---------- */
 showStart();

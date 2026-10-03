@@ -1,13 +1,22 @@
 /* =========================================================
-   logic.js — 診断の質問・相性スコア・表示用テキスト
+   logic.js — 診断の質問・相性スコア・材木の選び方・表示用テキスト
    ========================================================= */
 
 /* ---------- 診断の質問 ---------- */
 
 /** 選択肢のイラストで、比べる項目以外をそろえるための値 */
 const neutral = { knots: 0, color: .4, grain: .1 };
+const qStump = (id, rings) => stumpSVG({ id, rings, ...neutral }, { face: false, sprout: false, ground: false });
 
-/** 入口（S.entry）に合わせて並び替えた質問リストを返す */
+/** 5段階の位置（0〜4）と、その名前 */
+const SCALE = [0, 1, 2, 3, 4];
+const scaleWord = (pos, left, right) =>
+  ['とても「' + left + '」', 'やや「' + left + '」', 'どっちでもいい', 'やや「' + right + '」', 'とても「' + right + '」'][pos];
+
+/**
+ * 入口（S.entry）に合わせて並び替えた質問リストを返す
+ * ふつうの質問は opts[0]（左）と opts[1]（右）を5段階で比べる。four: true は4択
+ */
 function questions() {
   const product = S.entry === 'product';
 
@@ -15,15 +24,15 @@ function questions() {
     rings: {
       hint: '年輪', title: 'どっちの切り株に<br>キュンとする？',
       opts: [
-        { v: 1, label: 'ぎゅっと細かい', art: () => stumpSVG({ id: 'qa', rings: 1, ...neutral }, { face: false, sprout: false }) },
-        { v: 0, label: 'のびのび広め',   art: () => stumpSVG({ id: 'qa', rings: 0, ...neutral }, { face: false, sprout: false }) },
+        { v: 1, label: 'ぎゅっと細かい', art: () => qStump('qa', 1) },
+        { v: 0, label: 'のびのび広め',   art: () => qStump('qb', 0) },
       ],
     },
     knots: {
       hint: '節（ふし）', title: '節は、ある方が好き？',
       opts: [
-        { v: 0, label: 'すっきり節なし', art: () => plankSVG({ knots: 0, color: .3, grain: 0 }) },
-        { v: 1, label: '節も味わい',     art: () => plankSVG({ knots: 1, color: .3, grain: 0 }) },
+        { v: 0, label: 'すっきり節なし', art: () => plankSVG({ knots: 0, color: .3, grain: 1 }) },
+        { v: 1, label: '節も味わい',     art: () => plankSVG({ knots: 1, color: .3, grain: 1 }) },
       ],
     },
     color: {
@@ -43,8 +52,8 @@ function questions() {
     scent: {
       hint: '香り', title: '木の香りは？',
       opts: [
-        { v: 1, label: '深呼吸したいくらい', emo: '🌲' },
-        { v: 0, label: 'ほのかでいい',       emo: '🍃' },
+        { v: 1, label: '深呼吸したい', art: () => scentSVG(true) },
+        { v: 0, label: 'ほのかでいい', art: () => scentSVG(false) },
       ],
     },
     use: {
@@ -52,17 +61,17 @@ function questions() {
       title: product ? 'いま、欲しいものは？' : '木を使うなら、どこに？',
       four: true,
       opts: [
-        { v: 'furniture', label: product ? 'テーブルや椅子' : '家具',     emo: '🪑' },
-        { v: 'house',     label: product ? '床や壁の内装'   : '家・内装', emo: '🏠' },
-        { v: 'small',     label: product ? '小物・ギフト'   : '小物',     emo: '🎁' },
-        { v: 'shop',      label: product ? 'お店の什器'     : 'お店',     emo: '🏪' },
-      ],
+        { v: 'furniture', label: product ? 'テーブルや椅子' : '家具' },
+        { v: 'house',     label: product ? '床や壁の内装'   : '家・内装' },
+        { v: 'small',     label: product ? '小物・ギフト'   : '小物' },
+        { v: 'shop',      label: product ? 'お店の什器'     : 'お店' },
+      ].map(o => ({ ...o, art: () => useSVG(o.v) })),
     },
     story: {
       hint: '物語', title: '木を選ぶとき、<br>大事なのは？',
       opts: [
-        { v: 1, label: '育った場所や物語', emo: '📜' },
-        { v: 0, label: '見た目と使い心地', emo: '✨' },
+        { v: 1, label: '育った場所や物語', art: () => storySVG('story') },
+        { v: 0, label: '見た目と使い心地', art: () => storySVG('look') },
       ],
     },
   };
@@ -77,7 +86,19 @@ function questions() {
   return order.map(k => ({ key: k, ...Q[k] }));
 }
 
+/** 5段階の位置 → 回答値（左の v から右の v へ 4 等分） */
+const posToValue = (q, pos) => q.opts[0].v + (q.opts[1].v - q.opts[0].v) * pos / 4;
+
+/** 回答値 → 5段階の位置（未回答なら null） */
+function valueToPos(q, v) {
+  if (v == null) return null;
+  return Math.round((v - q.opts[0].v) / (q.opts[1].v - q.opts[0].v) * 4);
+}
+
 /* ---------- 相性 ---------- */
+
+/** 好みの強さ（どっちでもいい = .4 〜 とても = 1）を重みにする */
+const weightOf = p => .4 + 1.2 * Math.abs(p - .5);
 
 /** 木 t との相性（40〜99%） */
 function score(t) {
@@ -85,7 +106,7 @@ function score(t) {
   let sum = 0, w = 0;
   DIMS.forEach(({ k }) => {
     const p = a[k] ?? .5;
-    const wt = p === .5 ? .4 : 1; // 「どっちも好き」は重みを下げる
+    const wt = weightOf(p);
     sum += wt * (1 - Math.abs(p - t[k]));
     w += wt;
   });
@@ -94,26 +115,26 @@ function score(t) {
   return Math.min(99, Math.round(40 + sim * 50 + (useOk ? 9 : 0)));
 }
 
-/** 相性がいい理由（最大4つ） */
+/** 相性がいい理由（最大4つ。好みが強い項目から） */
 function reasons(t) {
   const a = S.answers;
-  const r = [];
-  DIMS.forEach(({ k }) => {
-    const p = a[k];
-    if (p != null && p !== .5 && Math.abs(p - t[k]) < .3) {
-      r.push(REASON[k] + 'が、あなたの好みにぴったり');
-    }
-  });
+  const r = DIMS
+    .filter(({ k }) => a[k] != null && a[k] !== .5 && Math.abs(a[k] - t[k]) < .3)
+    .sort((x, y) => Math.abs(a[y.k] - .5) - Math.abs(a[x.k] - .5))
+    .map(({ k }) => REASON[k] + 'が、あなたの好みにぴったり');
   if (t.uses.includes(a.use)) r.unshift(USES[a.use] + 'に使いやすい木');
   if (!r.length) r.push('好みとはちょっと違う、意外な出会いかも');
   return r.slice(0, 4);
 }
 
+/** 「もどす」で戻した木。次はこの木をいちばん上に出す */
+let frontId = null;
+
 /** まだ推しても・パスしてもいない木を、相性の高い順に */
 function queue() {
   return TREES
     .filter(t => !S.matches.includes(t.id) && !S.passed.includes(t.id))
-    .sort((a, b) => score(b) - score(a));
+    .sort((a, b) => (b.id === frontId) - (a.id === frontId) || score(b) - score(a));
 }
 
 /* ---------- 材木 ---------- */
@@ -140,6 +161,9 @@ function materialsFor(p, n, species) {
     .slice(0, n);
 }
 
+/** 好みと材木の相性（%表示用。40〜99） */
+const materialScore = m => Math.min(99, Math.round(40 + materialFit(me(), m) * 59));
+
 /** 材木のイラスト（節の等級は板目、柾目はまっすぐな木目で描く） */
 function materialSVG(m) {
   return plankSVG({ knots: m.knots ?? 0, color: m.color, grain: m.grain ?? 1 });
@@ -155,6 +179,25 @@ const txt = {
   grain: v => v < .4  ? 'まっすぐ'   : v < .7   ? 'ややゆらぎ'   : 'ゆらゆら',
   scent: v => v < .4  ? 'ほのか'     : v < .7   ? 'ほどよく'     : 'しっかり',
 };
+
+/** 回答値（5段階）を言葉にする（例：とても細かい / どっちでもいい） */
+function answerText(d, v) {
+  if (v == null || v === .5) return 'どっちでもいい';
+  const words = d.say || d.ends;
+  return v < .5
+    ? (v <= .125 ? 'とても' : 'やや') + words[0]
+    : (v >= .875 ? 'とても' : 'やや') + words[1];
+}
+
+/** 好みがはっきりしている項目（強い順に最大 n 個） */
+function strongPrefs(n) {
+  const a = S.answers;
+  return DIMS
+    .filter(d => a[d.k] != null && a[d.k] !== .5)
+    .sort((x, y) => Math.abs(a[y.k] - .5) - Math.abs(a[x.k] - .5))
+    .slice(0, n)
+    .map(d => ({ label: d.label, text: answerText(d, a[d.k]) }));
+}
 
 /** 回答から「あなたの切り株」をつくる */
 function me() {

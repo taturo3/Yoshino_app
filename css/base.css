@@ -16,6 +16,8 @@
   --wood: #F4DDB4;
   --line: #D2E4D6;
   --shade: rgba(34, 72, 46, .28);
+  --desk: #DCEEDF;
+  --desk-2: #C4DECA;
 
   --display: "Mochiy Pop One", "Hiragino Maru Gothic ProN", "Zen Maru Gothic", system-ui, sans-serif;
   --body: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
@@ -40,6 +42,8 @@
     --wood: #5B4731;
     --line: #2E4A3A;
     --shade: rgba(0, 0, 0, .5);
+    --desk: #0E1712;
+    --desk-2: #1A2A20;
   }
 }
 
@@ -56,6 +60,8 @@
   --wood: #5B4731;
   --line: #2E4A3A;
   --shade: rgba(0, 0, 0, .5);
+  --desk: #0E1712;
+  --desk-2: #1A2A20;
 }
 
 /* ---------- リセット ---------- */
@@ -150,6 +156,104 @@ main {
 
 .pad {
   padding: 8px 20px 24px;
+}
+
+/* 画面が切り替わったときの入場アニメーション（utils.js の paint() がつける） */
+main > .enter {
+  animation: screenIn .34s cubic-bezier(.2, .9, .3, 1) both;
+}
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+/* ---------- PC で見たときのスマホ枠 ---------- */
+.statusbar,
+.device-note {
+  display: none;
+}
+
+@media (min-width: 640px) and (min-height: 720px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    background:
+      radial-gradient(circle at 15% 10%, var(--bg) 0, transparent 45%),
+      radial-gradient(circle at 85% 90%, var(--sakura-2) 0, transparent 40%),
+      linear-gradient(160deg, var(--desk), var(--desk-2));
+  }
+
+  :root {
+    padding: 0;
+  }
+
+  .app {
+    flex: none;
+    width: 390px;
+    max-width: none;
+    height: min(844px, calc(100vh - 100px));
+    margin: 0;
+    border-radius: 48px;
+    background: var(--bg);
+    box-shadow:
+      0 0 0 11px #1E2B23,
+      0 0 0 13px #44564A,
+      0 50px 90px -30px rgba(20, 40, 28, .6);
+  }
+
+  .statusbar {
+    flex: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    padding: 6px 30px 0 34px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .statusbar .island {
+    position: absolute;
+    left: 50%;
+    top: 11px;
+    width: 116px;
+    height: 32px;
+    border-radius: 20px;
+    background: #10170F;
+    transform: translateX(-50%);
+  }
+
+  .statusbar .sys {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .statusbar .sys svg {
+    height: 12px;
+    width: auto;
+    fill: currentColor;
+  }
+
+  .device-note {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.7;
+  }
+
+  .device-note b {
+    font-family: var(--display);
+    font-weight: 400;
+    color: var(--sugi);
+    font-size: 15px;
+  }
 }
 
 /* ---------- 共通アニメーション ---------- */
