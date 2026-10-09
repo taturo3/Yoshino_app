@@ -13,8 +13,9 @@ const KEY = 'oshigi-sample-v1';
  *   feelings  … 木ごとの「次にしたいこと」 { [treeId]: string[] }
  *   last      … 直前のスワイプ { id, liked }（「もどす」に使う）
  *   inquiries … 送った相談（モック） { subject, kind, at }[]
+ *   stamps    … スタンプラリーで集めたスタンプ { [spotId]: 押した日時 }
  */
-const INITIAL = () => ({ entry: null, answers: {}, matches: [], passed: [], feelings: {}, last: null, inquiries: [] });
+const INITIAL = () => ({ entry: null, answers: {}, matches: [], passed: [], feelings: {}, last: null, inquiries: [], stamps: {} });
 
 let S = INITIAL();
 

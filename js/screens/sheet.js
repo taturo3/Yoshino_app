@@ -27,6 +27,7 @@ function closeSheet() {
 function refreshScreen() {
   if (currentTab === 'oshi') showOshi();
   else if (currentTab === 'mat') showMaterials();
+  else if (currentTab === 'stamp') showStamps();
   else if (currentTab === 'swipe') showSwipe();
 }
 

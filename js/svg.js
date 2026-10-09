@@ -377,3 +377,67 @@ function useSVG(k) {
   }[k];
   return `<svg viewBox="0 0 160 100" aria-hidden="true">${shadow}${art}</svg>`;
 }
+
+/* ---------------------------------------------------------
+   スタート画面の切り株（最初のデザインのまま。シンプルな平面の絵）
+   --------------------------------------------------------- */
+function heroStumpSVG() {
+  const t = { id: 'hero', rings: .8, knots: .15, color: .6, grain: .2 };
+  const R = 80, cx = 100, cy = 104, ry = .9;
+  const rand = rng(hash(t.id));
+
+  const ringCount = Math.round(5 + t.rings * 11);
+  const sap   = mix('#FCF0D8', '#F7E3C4', t.color); // 白太
+  const heart = mix('#F3D9AE', '#DE8A6E', t.color); // 赤身
+  const line  = mix('#D9B487', '#A95A45', t.color); // 年輪の線
+  const off = t.grain * 8;                          // 芯のずれ
+
+  // 側面と樹皮
+  let out = `<ellipse cx="${cx}" cy="${cy + 16}" rx="${R}" ry="${R * ry}" fill="#7B5134"/>`
+          + `<rect x="${cx - R}" y="${cy}" width="${R * 2}" height="16" fill="#7B5134"/>`
+          + `<ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * ry}" fill="#9A6A45"/>`
+          + `<ellipse cx="${cx}" cy="${cy}" rx="${R - 7}" ry="${(R - 7) * ry}" fill="${sap}"/>`
+          + `<ellipse cx="${cx + off * .5}" cy="${cy}" rx="${(R - 7) * .66}" ry="${(R - 7) * .66 * ry}" fill="${heart}"/>`;
+
+  // 年輪
+  for (let i = 1; i <= ringCount; i++) {
+    const r = (R - 10) * (i / ringCount);
+    const amp = .012 + t.grain * .055;
+    const ph = rand() * 6.28;
+    const k = 2 + Math.floor(rand() * 3);
+    let d = '';
+    for (let j = 0; j <= 40; j++) {
+      const a = j / 40 * Math.PI * 2;
+      const rr = r * (1 + amp * Math.sin(k * a + ph));
+      d += (j ? 'L' : 'M') + (cx + off * (1 - i / ringCount) + rr * Math.cos(a)).toFixed(1) + ' ' + (cy + rr * Math.sin(a) * ry).toFixed(1);
+    }
+    out += `<path d="${d}Z" fill="none" stroke="${line}" stroke-width="${i % 3 ? 1 : 1.8}" opacity=".6"/>`;
+  }
+
+  // 節
+  for (let i = 0; i < Math.round(t.knots * 4); i++) {
+    const a = rand() * Math.PI * 2;
+    const r = (R - 10) * (.66 + rand() * .2);
+    const x = (cx + r * Math.cos(a)).toFixed(1);
+    const y = (cy + r * Math.sin(a) * ry).toFixed(1);
+    out += `<ellipse cx="${x}" cy="${y}" rx="7.5" ry="6" fill="none" stroke="${line}" stroke-width="1.5"/>`
+         + `<ellipse cx="${x}" cy="${y}" rx="4.2" ry="3.4" fill="#744630"/>`;
+  }
+
+  // 顔
+  out += `<ellipse cx="${cx - 30}" cy="${cy + 15}" rx="9" ry="5.5" fill="#FF8FB1" opacity=".65"/>`
+       + `<ellipse cx="${cx + 30}" cy="${cy + 15}" rx="9" ry="5.5" fill="#FF8FB1" opacity=".65"/>`
+       + `<circle cx="${cx - 18}" cy="${cy + 2}" r="5" fill="#3B2A20"/><circle cx="${cx - 16.5}" cy="${cy + .2}" r="1.7" fill="#fff"/>`
+       + `<circle cx="${cx + 18}" cy="${cy + 2}" r="5" fill="#3B2A20"/><circle cx="${cx + 19.5}" cy="${cy + .2}" r="1.7" fill="#fff"/>`
+       + `<path d="M${cx - 7} ${cy + 12} q7 8 14 0" stroke="#3B2A20" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+
+  // 芽
+  const ty = cy - R * ry + 3;
+  out += `<g class="sprout">`
+       + `<path d="M${cx} ${ty} V${ty - 18}" stroke="#4E9A63" stroke-width="4" stroke-linecap="round"/>`
+       + `<ellipse cx="${cx - 10}" cy="${ty - 20}" rx="11" ry="6.5" fill="#6DBE7F" transform="rotate(-28 ${cx - 10} ${ty - 20})"/>`
+       + `<ellipse cx="${cx + 10}" cy="${ty - 22}" rx="11" ry="6.5" fill="#86D196" transform="rotate(28 ${cx + 10} ${ty - 22})"/>`
+       + `</g>`;
+
+  return `<svg viewBox="0 0 200 200" role="img" aria-label="推し木の切り株">${out}</svg>`;
+}

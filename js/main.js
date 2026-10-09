@@ -4,7 +4,7 @@
 
 /* ---------- タブ ---------- */
 
-/** いま選ばれているタブ（'swipe' | 'oshi' | 'mat' | 'me' | null） */
+/** いま選ばれているタブ（'swipe' | 'oshi' | 'stamp' | 'mat' | 'me' | null） */
 let currentTab = null;
 
 /** cur: タブ名。null ならタブバーを隠す */
@@ -30,6 +30,7 @@ function updateCount() {
 const TAB_SCREENS = {
   swipe: showSwipe,
   oshi: showOshi,
+  stamp: showStamps,
   mat: showMaterials,
   me: () => showProfile(false),
 };

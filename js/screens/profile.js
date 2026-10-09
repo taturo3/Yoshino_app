@@ -62,6 +62,7 @@ function showProfile(first) {
       ${!first ? `
       <div class="prof-card settings">
         <h3>設定</h3>
+        <button class="row" id="toStamp"><span>集めたスタンプ</span><b>${SPOTS.filter(s => S.stamps[s.id]).length} / ${SPOTS.length}</b></button>
         <div class="row"><span>送った相談</span><b>${inquiries}件</b></div>
         <button class="row" id="redo"><span>診断をやりなおす</span>${ICON.arrow}</button>
         <button class="row danger" id="reset"><span>データをすべて消す</span>${ICON.arrow}</button>
@@ -75,10 +76,12 @@ function showProfile(first) {
   $('#go').onclick = () => showSwipe();
   $('#share').onclick = shareResult;
   $('#redo').onclick = () => showStart();
+  const toStamp = $('#toStamp');
+  if (toStamp) toStamp.onclick = () => showStamps();
   const reset = $('#reset');
   if (reset) {
     reset.onclick = () => {
-      if (!confirm('診断結果・推し木・相談の履歴をすべて消します。よろしいですか？')) return;
+      if (!confirm('診断結果・推し木・スタンプ・相談の履歴をすべて消します。よろしいですか？')) return;
       resetAll();
       updateCount();
       toast('データを消しました');

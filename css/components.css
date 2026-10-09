@@ -24,7 +24,8 @@
   gap: 2px;
   font-size: 11px;
   color: var(--sub);
-  padding: 6px 14px;
+  padding: 6px 8px;
+  min-width: 58px;
   border-radius: 14px;
   position: relative;
 }
