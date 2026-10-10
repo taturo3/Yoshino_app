@@ -129,9 +129,27 @@ const TREES = [
 ];
 
 // story が未設定の木はまんなか（.5）に、species が未設定の木は杉にしておく
+/**
+ * スワイプのカードと詳細シートに出す写真（pic/ フォルダ）
+ * 素材が少ないので、特徴の近い木どうしで同じ写真を使っている。画面には「※イメージ」と表示する
+ */
+const TREE_PHOTOS = {
+  hiyori:  '22092054_s.jpg', // 製材された明るい柾目の角材
+  kaori:   '22092054_s.jpg',
+  koharu:  '25064665_s.jpg', // 明るい色の丸テーブル
+  akane:   '25980943_s.jpg', // 赤身と白太がまざった板
+  shizuku: '29229374_s.jpg', // 桜色がかった、ゆらぐ木目と小さな節
+  morio:   '32956577_s.jpg', // 大きくうねる木目と節
+  popuri:  '25531759_s.jpg', // 節の多い板壁
+  taiga:   '4790123_s.jpg',  // 濃い色の大きくうねる木目
+  yuzuha:  '32916583_s.jpg', // 節ありの板張りの部屋
+  hinata:  '32916583_s.jpg',
+};
+
 TREES.forEach(t => {
   if (t.story == null) t.story = .5;
   if (t.species == null) t.species = 'sugi';
+  if (TREE_PHOTOS[t.id]) t.photo = 'pic/' + TREE_PHOTOS[t.id];
 });
 
 /**

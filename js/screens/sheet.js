@@ -77,7 +77,7 @@ function openSheet(t) {
 
   const ov = openOverlay(`
     <div class="sheet-art" style="background:${t.tint}">
-      ${treeArt(t)}
+      ${treePhoto(t)}
       <button class="close" aria-label="閉じる">${ICON.x}</button>
       <span class="badge">相性 <b>${score(t)}%</b></span>
     </div>

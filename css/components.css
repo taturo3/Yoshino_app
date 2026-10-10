@@ -56,6 +56,10 @@
   font-weight: 700;
 }
 
+.tab .count[hidden] {
+  display: none;
+}
+
 /* ---------- ボタン ---------- */
 .btn {
   display: flex;
@@ -817,4 +821,41 @@
 .done .btn {
   margin-top: 12px;
   max-width: 260px;
+}
+
+/* ---------- 木の写真（スワイプのカード・詳細シート） ---------- */
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none; /* カードのドラッグを画像に邪魔させない */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 相性バッジなどが写真の上でも読めるよう、上端を少し暗くする */
+.card-art:has(.photo)::before,
+.sheet-art:has(.photo)::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 70px;
+  background: linear-gradient(rgba(0, 0, 0, .22), transparent);
+  pointer-events: none;
+}
+
+.img-note {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  pointer-events: none;
 }

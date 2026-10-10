@@ -7,6 +7,13 @@ function treeArt(t, opts) {
   return `<div class="scene">${sceneSVG(t.tint, t.id)}</div><div class="char">${stumpSVG(t, opts)}</div>`;
 }
 
+/** 木の写真（実物のイメージ）。写真がない木はイラストにする */
+function treePhoto(t) {
+  if (!t.photo) return treeArt(t);
+  return `<img class="photo" src="${t.photo}" alt="${t.name}のイメージ写真" draggable="false">`
+       + '<span class="img-note">※イメージ</span>';
+}
+
 /** 木のカード（cls: 'front' = いちばん上 / 'next' = その下） */
 function cardHTML(t, cls) {
   const sp = SPECIES[t.species].name;
@@ -17,7 +24,7 @@ function cardHTML(t, cls) {
   return `
     <article class="card ${cls}" data-id="${t.id}" ${a11y}>
       <div class="card-art" style="background:${t.tint}">
-        ${treeArt(t)}
+        ${treePhoto(t)}
         <span class="badge">相性 <b>${score(t)}%</b></span>
         <span class="place">${t.place}育ち</span>
         <span class="stamp like">推し！</span>
